@@ -9,23 +9,21 @@ latest_metrics = {}
 
 
 class Metrics(BaseModel):
-    #hostname: str
+    hostname: str
     cpu_usage_percent: float
     memory_used_mb: int
     memory_used_percent: float
-    timestamp: str
     processes: List[str]
 
 
 @app.post("/metrics")
 async def receive_metrics(data: Metrics):
     proc_data = data.dict()
-    #proc_data.pop("hostname", None)
-    latest_metrics[0] = proc_data
+    proc_data.pop("hostname", None)
+    latest_metrics[data.hostname] = proc_data
     return {"status": "received"}
 
 
-# WebSocket для UI
 @app.websocket("/ws/metrics")
 async def websocket_metrics(websocket: WebSocket):
     await websocket.accept()
