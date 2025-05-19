@@ -11,21 +11,18 @@ func main() {
 	ticker := time.NewTicker(5 * time.Second)
 	defer ticker.Stop()
 
-	for {
-		select {
-		case <-ticker.C:
-			metrics, err := CollectMetrics()
-			if err != nil {
-				fmt.Println("Помилка збору метрик:", err)
-				continue
-			}
+	for range ticker.C {
+		metrics, err := CollectMetrics()
+		if err != nil {
+			fmt.Println("Помилка збору метрик:", err)
+			continue
+		}
 
-			err = SendMetrics(metrics)
-			if err != nil {
-				fmt.Println("Помилка відправки метрик:", err)
-			} else {
-				fmt.Println("Метрики успішно надіслано.")
-			}
+		err = SendMetrics(metrics)
+		if err != nil {
+			fmt.Println("Помилка відправки метрик:", err)
+		} else {
+			fmt.Println("Метрики успішно надіслано.")
 		}
 	}
 }

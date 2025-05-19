@@ -4,31 +4,33 @@ import (
 	"github.com/shirou/gopsutil/v3/cpu"
 	"github.com/shirou/gopsutil/v3/mem"
 	"github.com/shirou/gopsutil/v3/process"
-	"time"
+	"os"
 )
 
 type Metrics struct {
+	HostName          string   `json:"hostname"`
 	CPUUsagePercent   float64  `json:"cpu_usage_percent"`
 	MemoryUsedMB      uint64   `json:"memory_used_mb"`
 	MemoryUsedPercent float64  `json:"memory_used_percent"`
-	Timestamp         string   `json:"timestamp"`
 	Processes         []string `json:"processes"`
 }
 
 func CollectMetrics() (*Metrics, error) {
-	// CPU
+	hostName, err := os.Hostname()
+	if err != nil {
+		hostName = "unknown"
+	}
+
 	cpuPercentage, err := cpu.Percent(0, false)
 	if err != nil {
 		return nil, err
 	}
 
-	//Memory
 	vmStat, err := mem.VirtualMemory()
 	if err != nil {
 		return nil, err
 	}
 
-	// Processes
 	allProcs, err := process.Processes()
 	if err != nil {
 		return nil, err
@@ -44,10 +46,10 @@ func CollectMetrics() (*Metrics, error) {
 	}
 
 	metrics := &Metrics{
+		HostName:          hostName,
 		CPUUsagePercent:   cpuPercentage[0],
 		MemoryUsedMB:      vmStat.Used / 1024 / 1024,
 		MemoryUsedPercent: vmStat.UsedPercent,
-		Timestamp:         time.Now().Format(time.RFC3339),
 		Processes:         processNames,
 	}
 
