@@ -1,0 +1,8 @@
+version: "3.9"
+
+services:
+  fastapi-app:
+    image: bohdanbulakh/mtsd-lab4-api
+    ports:
+      - "8000:8000"
+    restart: unless-stopped

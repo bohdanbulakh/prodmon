@@ -31,8 +31,7 @@ async def websocket_metrics(websocket: WebSocket):
     try:
         while True:
             await websocket.send_json(latest_metrics)
-            time = await websocket.receive_json()
-            await asyncio.sleep(time["seconds"] or 3)
+            await asyncio.sleep(3)
 
     except WebSocketDisconnect:
         print("Client disconnected")
