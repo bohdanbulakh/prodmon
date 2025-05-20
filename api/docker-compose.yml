@@ -3,6 +3,17 @@ version: "3.9"
 services:
   fastapi-app:
     image: bohdanbulakh/mtsd-lab4-api
+    container_name: mtsd-lab4-api
     ports:
       - "8000:8000"
     restart: unless-stopped
+
+  watchtower:
+    image: containrrr/watchtower
+    container_name: mtsd-lab4-watchtower
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    command:
+      - "--cleanup"
+      - "-i"
+      - "60"
