@@ -1,0 +1,16 @@
+version: "3.9"
+
+services:
+  agent:
+    image: bohdanbulakh/mtsd-lab4-agent
+    privileged: true
+    pid: "host"
+    volumes:
+      - /proc:/host/proc:ro
+      - /sys:/host/sys:ro
+      - /etc:/host/etc:ro
+    environment:
+      - API_URL=http://host.docker.internal:8000/metrics
+      - HOST_PROC=/host/proc
+      - HOST_SYS=/host/sys
+      - HOST_ETC=/host/etc

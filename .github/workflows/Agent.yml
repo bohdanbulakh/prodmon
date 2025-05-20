@@ -1,0 +1,56 @@
+name: Agent
+
+on:
+  push:
+    branches: [ main ]
+    paths:
+      - "agent/**"
+  pull_request:
+    branches: [ main ]
+    paths:
+      - "agent/**"
+
+jobs:
+  build:
+    needs: [ test ]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Log in to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKER_HUB_USERNAME }}
+          password: ${{ secrets.DOCKER_HUB_PASSWORD }}
+
+      - name: Build Docker image
+        uses: docker/build-push-action@v6
+        with:
+          context: agent
+          tags: bohdanbulakh/mtsd-lab4-agent
+          push: true
+          platforms: linux/amd64
+
+  test:
+    name: Run Go Tests
+    runs-on: ubuntu-latest
+
+    defaults:
+      run:
+        working-directory: agent
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: 1.24
+
+      - name: Install dependencies
+        run: go mod tidy
+
+      - name: Run unit tests
+        run: go test -v ./...
