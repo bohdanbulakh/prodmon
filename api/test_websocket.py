@@ -11,7 +11,7 @@ def test_websocket_basic_communication():
         "cpu_usage_percent": 12.3,
         "memory_used_mb": 111,
         "memory_used_percent": 22.2,
-        "processes": ["wsproc"]
+        "processes": ["test"]
     }
 
     with client.websocket_connect("/ws/metrics") as websocket:
