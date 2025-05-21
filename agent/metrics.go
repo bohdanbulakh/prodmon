@@ -12,6 +12,7 @@ type Metrics struct {
 	CPUUsagePercent   float64  `json:"cpu_usage_percent"`
 	MemoryUsedMB      uint64   `json:"memory_used_mb"`
 	MemoryUsedPercent float64  `json:"memory_used_percent"`
+	TotalMemoryMB     uint64   `json:"memory_max"`
 	Processes         []string `json:"processes"`
 }
 
@@ -50,6 +51,7 @@ func CollectMetrics() (*Metrics, error) {
 		CPUUsagePercent:   cpuPercentage[0],
 		MemoryUsedMB:      vmStat.Used / 1024 / 1024,
 		MemoryUsedPercent: vmStat.UsedPercent,
+		TotalMemoryMB:     vmStat.Total / 1024 / 1024,
 		Processes:         processNames,
 	}
 

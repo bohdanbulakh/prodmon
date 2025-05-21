@@ -39,6 +39,17 @@ func TestCollectMetrics_HostName(t *testing.T) {
 	}
 }
 
+func TestCollectMetrics_TotalMemory(t *testing.T) {
+	metrics, err := CollectMetrics()
+	if err != nil {
+		t.Fatalf("Помилка при зборі метрик: %v", err)
+	}
+
+	if metrics.TotalMemoryMB == 0 {
+		t.Errorf("TotalMemoryMB не повинен бути 0")
+	}
+}
+
 func TestCollectMetrics_ProcessesNotEmpty(t *testing.T) {
 	metrics, _ := CollectMetrics()
 	if len(metrics.Processes) == 0 {
