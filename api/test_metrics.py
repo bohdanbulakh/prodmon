@@ -12,6 +12,7 @@ valid_cases = [
             "cpu_usage_percent": 45.0,
             "memory_used_mb": 1024,
             "memory_used_percent": 50.0,
+            "memory_max": 2048,
             "processes": ["python", "nginx"]
         },
         "expected_status": 200,
@@ -24,6 +25,7 @@ valid_cases = [
             "cpu_usage_percent": 0.0,
             "memory_used_mb": 0,
             "memory_used_percent": 0.0,
+            "memory_max": 0,
             "processes": []
         },
         "expected_status": 200,
@@ -39,6 +41,7 @@ invalid_cases = [
             "cpu_usage_percent": 30.0,
             "memory_used_mb": 512,
             # "memory_used_percent" is missing
+            "memory_max": 1024,
             "processes": ["node"]
         },
         "expected_status": 422
@@ -50,6 +53,7 @@ invalid_cases = [
             "cpu_usage_percent": "high",  # invalid type
             "memory_used_mb": 512,
             "memory_used_percent": 30.0,
+            "memory_max": 2048,
             "processes": ["java"]
         },
         "expected_status": 422
@@ -61,6 +65,7 @@ invalid_cases = [
             "cpu_usage_percent": 20.0,
             "memory_used_mb": 256,
             "memory_used_percent": 15.0,
+            "memory_max": 512,
             "processes": None
         },
         "expected_status": 422
