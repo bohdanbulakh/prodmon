@@ -3705,6 +3705,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"react-use-websocket@npm:^4.13.0":
+  version: 4.13.0
+  resolution: "react-use-websocket@npm:4.13.0"
+  checksum: 10c0/92f0941c67984f3b43979a2e5aa9a358d1e2b01591575b09fdcdd638d0c4275f6c5e180d1173632bc0fd564458afc3583643635eaeb4e0b8ce059555576661f3
+  languageName: node
+  linkType: hard
+
 "react@npm:^19.0.0":
   version: 19.1.0
   resolution: "react@npm:19.1.0"
@@ -4562,6 +4569,7 @@ __metadata:
     next-themes: "npm:^0.4.6"
     react: "npm:^19.0.0"
     react-dom: "npm:^19.0.0"
+    react-use-websocket: "npm:^4.13.0"
     recharts: "npm:^2.15.3"
     sonner: "npm:^2.0.3"
     tailwind-merge: "npm:^3.3.0"
