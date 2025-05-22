@@ -18,10 +18,13 @@ const COLORS = {
 
 type MetricsPageProps = {
   hostname: string;
-  url: string;
+  apiUrl: string;
 };
 
-export function MetricsPage ({ hostname, url }: MetricsPageProps) {
+export function MetricsPage ({ hostname, apiUrl }: MetricsPageProps) {
+  const protocol = typeof window !== 'undefined' && window.location.protocol === 'https:' ? 'wss' : 'ws';
+  const url = `${protocol}://${apiUrl}/metrics/${hostname}`;
+
   const { metricsHistory: history, error } = useMetricsData(url);
   const router = useRouter();
 
