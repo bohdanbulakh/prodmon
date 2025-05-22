@@ -10,7 +10,7 @@ services:
       - /sys:/host/sys:ro
       - /etc:/host/etc:ro
     environment:
-      - API_URL=http://host.docker.internal:8000/metrics
+      - API_URL=http://api.mtsd-lab4.pp.ua/metrics
       - HOST_PROC=/host/proc
       - HOST_SYS=/host/sys
       - HOST_ETC=/host/etc

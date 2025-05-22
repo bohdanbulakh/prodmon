@@ -7,4 +7,6 @@ export interface Metrics {
   memory_used_mb: number;
   memory_used_percent: number;
   processes: string[];
+  time: string;
+  memory_max: number;
 }

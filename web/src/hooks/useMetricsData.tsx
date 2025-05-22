@@ -1,22 +1,12 @@
 import { useEffect, useRef, useState } from 'react';
 import useWebSocket from 'react-use-websocket';
+import { Metrics } from '@/lib/responses/metrics.response';
 
 const MAX_POINTS = 30;
 const MAX_RECONNECT_ATTEMPTS = 3;
 
-type MetricEntry = {
-  time: string;
-  cpu_usage_percent: number;
-  memory_max: number;
-  memory_used_mb: number;
-  memory_used_percent: number;
-  processes: string[];
-};
-
-type MetricsHistory = MetricEntry[];
-
 export const useMetricsData = (wsUrl: string) => {
-  const [metricsHistory, setMetricsHistory] = useState<MetricsHistory>([]);
+  const [metricsHistory, setMetricsHistory] = useState<Metrics[]>([]);
   const [error, setError] = useState<Error | null>(null);
   const reconnectCount = useRef(0);
 
@@ -39,8 +29,8 @@ export const useMetricsData = (wsUrl: string) => {
     if (error || !lastJsonMessage) return;
 
     setMetricsHistory(prev => {
-      const { processes, ...data } = lastJsonMessage as Omit<MetricEntry, 'time'>;
-      const entry: MetricEntry = {
+      const { processes, ...data } = lastJsonMessage as Omit<Metrics, 'time'>;
+      const entry: Metrics = {
         ...data,
         time: new Date().toISOString(),
         processes: processes.sort(),

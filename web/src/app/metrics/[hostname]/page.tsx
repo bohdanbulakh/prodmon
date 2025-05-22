@@ -2,15 +2,16 @@ import { redirect } from 'next/navigation';
 import { MetricsPage } from '@/app/metrics/[hostname]/MetricsPage';
 
 type PageProps = {
-  params: { hostname: string }
+  params: Promise<{ hostname: string }>
 };
 
 export default async function Page({ params }: PageProps) {
-  const { hostname } = params;
+  const { hostname } = await params;
+  const url = `ws://${process.env.NEXT_API_URL}/metrics/${hostname}`
 
   if (!hostname) {
     redirect('/');
   }
 
-  return <MetricsPage hostname={hostname} />;
+  return <MetricsPage hostname={hostname} url={url} />;
 }

@@ -17,12 +17,11 @@ const COLORS = {
 
 type MetricsPageProps = {
   hostname: string;
+  url: string;
 };
 
-export function MetricsPage ({ hostname }: MetricsPageProps) {
-  const { metricsHistory: history, error } = useMetricsData(
-    `ws://${process.env.NEXT_PUBLIC_API_HOST}/metrics/${hostname}`
-  );
+export function MetricsPage ({ hostname, url }: MetricsPageProps) {
+  const { metricsHistory: history, error } = useMetricsData(url);
 
   if (!history || error) {
     if (error) toast.error(error.message);
