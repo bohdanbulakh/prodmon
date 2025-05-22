@@ -2,12 +2,13 @@
 
 import { useMetricsData } from '@/hooks/useMetricsData';
 import { toast } from 'sonner';
-import { redirect } from 'next/navigation';
+import { useRouter } from 'next/navigation';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import Chart from '@/components/common/MetricsDashboard';
 import { Separator } from '@/components/ui/separator';
-import { ScrollArea } from '@radix-ui/react-scroll-area';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import { ScrollArea } from '@/components/ui/scroll-area';
+import { useEffect } from 'react';
 
 const COLORS = {
   cpu: '#8884d8',
@@ -22,11 +23,14 @@ type MetricsPageProps = {
 
 export function MetricsPage ({ hostname, url }: MetricsPageProps) {
   const { metricsHistory: history, error } = useMetricsData(url);
+  const router = useRouter();
 
-  if (!history || error) {
-    if (error) toast.error(error.message);
-    redirect('/');
-  }
+  useEffect(() => {
+    if (error) {
+      toast.error(error.message);
+      router.push('/');
+    }
+  }, [error]);
 
   const metrics = history[history.length - 1];
   const maxMemoryMb = metrics?.memory_max;
@@ -57,7 +61,7 @@ export function MetricsPage ({ hostname, url }: MetricsPageProps) {
             max={maxMemoryMb}
             tooltip={[
               { key: 'memory_used_mb', title: 'Memory Usage (MB)' },
-              { key: 'memory_used_percent', title: 'Memory Usage (%)' }
+              { key: 'memory_used_percent', title: 'Memory Usage (%)' },
             ]}
           />
         </div>

@@ -3,7 +3,7 @@
 import { Metrics } from '@/lib/responses/metrics.response';
 import { useCallback } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Area, AreaChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
+import { Area, AreaChart, CartesianGrid, ResponsiveContainer, Tooltip, TooltipProps, XAxis, YAxis } from 'recharts';
 
 type ChartProps = {
   data: Metrics[];
@@ -21,20 +21,22 @@ export default function Chart (
   { data, dataKey, color, label, max, tooltip }: ChartProps,
 ) {
 
-  const CustomTooltip = useCallback(({ active, payload }: any) => {
+  const CustomTooltip = useCallback(({ active, payload }: TooltipProps<string, string>) => {
     if (active && payload && payload.length) {
       return (
         <div className="rounded-md border bg-background p-2 shadow-sm text-sm">
           {
             tooltip.map(({ key, title }) => (
-              <div key={key}><strong>{title}:</strong> {payload[0].payload[key]}</div>
+              <div key={key}><strong>{title}:</strong> {
+                Math.round(payload[0].payload[key] * 100) / 100
+              }</div>
             ))
           }
         </div>
       );
     }
     return null;
-  }, [tooltip])
+  }, [tooltip]);
 
   return (
     <Card>

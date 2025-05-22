@@ -10,35 +10,51 @@ export const useMetricsData = (wsUrl: string) => {
   const [error, setError] = useState<Error | null>(null);
   const reconnectCount = useRef(0);
 
+  const hostname = wsUrl.split('/').pop() ?? 'unknown';
+  const localStorageKey = `metrics:${hostname}`;
+
+  useEffect(() => {
+    const saved = localStorage.getItem(localStorageKey);
+    if (saved) {
+      try {
+        const parsed = JSON.parse(saved) as Metrics[];
+        setMetricsHistory(parsed);
+      } catch {
+        localStorage.removeItem(localStorageKey);
+      }
+    }
+  }, [localStorageKey]);
+
   const { lastJsonMessage, readyState } = useWebSocket(wsUrl, {
     shouldReconnect: () => {
       if (reconnectCount.current < MAX_RECONNECT_ATTEMPTS) {
         reconnectCount.current += 1;
         return true;
-      } else {
-        setError(new Error('Host disconnected'));
-        reconnectCount.current = 0;
-        return false;
       }
-    },
-    onReconnectStop: () => setError(Error('Host disconnected')),
-  });
 
+      reconnectCount.current = 0;
+      localStorage.removeItem(localStorageKey);
+      setError(Error('Host disconnected'));
+      return false;
+    },
+  });
 
   useEffect(() => {
     if (error || !lastJsonMessage) return;
 
-    setMetricsHistory(prev => {
-      const { processes, ...data } = lastJsonMessage as Omit<Metrics, 'time'>;
-      const entry: Metrics = {
-        ...data,
-        time: new Date().toISOString(),
-        processes: processes.sort(),
-      };
+    const { processes, ...data } = lastJsonMessage as Omit<Metrics, 'time'>;
+    const entry: Metrics = {
+      ...data,
+      time: new Date().toISOString(),
+      processes: processes.sort(),
+    };
 
-      return [...prev, entry].slice(-MAX_POINTS);
+    setMetricsHistory(prev => {
+      const updated = [...prev, entry].slice(-MAX_POINTS);
+      localStorage.setItem(localStorageKey, JSON.stringify(updated));
+      return updated;
     });
-  }, [lastJsonMessage, error]);
+  }, [lastJsonMessage, error, localStorageKey]);
 
   return { metricsHistory, error, readyState };
 };
