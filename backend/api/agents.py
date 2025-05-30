@@ -23,9 +23,9 @@ def remove_agent(data: AgentAddRemove, db: Session = Depends(get_db), username: 
 @router.get("/agents")
 def list_agents(db: Session = Depends(get_db), username: str = Depends(get_current_user)):
     user = db.query(User).filter_by(username=username).first()
-    agents = [agent.hostname for agent in user.agents]
+    agents = [{"id": agent.id, "hostname": agent.hostname} for agent in user.agents]
 
-    return {"agents": agents}
+    return agents
 
 
 @router.post("/agents/setTime")
