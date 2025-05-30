@@ -64,7 +64,7 @@ The repository is organized into the following directories:
     * **API Service (Python):**
 
       ```bash
-      cd api
+      cd backend
       python3 -m venv venv
       source venv/bin/activate
       pip install -r requirements.txt
@@ -104,7 +104,7 @@ After setting up all components:
 
 1. Run the API service.
     ```bash
-   cd api
+   cd backend
    uvicorn main:app --host 0.0.0.0 --port 8000
    ```
 
@@ -134,7 +134,7 @@ After setting up all components:
 
     * Python 3.12
     * Flask
-    * Other dependencies are listed in [requirements.txt](./api/requirements.txt)
+    * Other dependencies are listed in [requirements.txt](backend/requirements.txt)
 
 * **Web Frontend:**
 

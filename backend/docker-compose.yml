@@ -2,15 +2,15 @@ version: "3.9"
 
 services:
   fastapi-app:
-    image: bohdanbulakh/mtsd-lab4-api
-    container_name: mtsd-lab4-api
+    image: bohdanbulakh/prodmon-backend
+    container_name: prodmon-backend
     ports:
       - "8000:8000"
     restart: unless-stopped
 
   watchtower:
     image: containrrr/watchtower
-    container_name: mtsd-lab4-watchtower
+    container_name: prodmon-watchtower
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
     command:
