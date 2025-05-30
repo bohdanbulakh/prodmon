@@ -1,6 +1,7 @@
 from fastapi import APIRouter, HTTPException, Response, Depends, Cookie
 from passlib.hash import bcrypt
-from itsdangerous import URLSafeSerializer
+from itsdangerous import URLSafeSerializer, BadSignature
+from models.models import User
 from schemas.user import UserCreate, UserLogin
 from database import get_db
 from sqlalchemy.orm import Session
@@ -8,6 +9,15 @@ from crud import user as crud_user
 
 router = APIRouter()
 serializer = URLSafeSerializer("secret-key")
+
+
+def get_current_user_from_token(token: str, db: Session):
+    try:
+        username = serializer.loads(token)
+        return db.query(User).filter_by(username=username).first()
+    except BadSignature:
+        return None
+
 
 @router.post("/register")
 def register(user: UserCreate, db: Session = Depends(get_db)):
@@ -17,6 +27,7 @@ def register(user: UserCreate, db: Session = Depends(get_db)):
     crud_user.create_user(db, user.username, hashed_password)
     return {"message": "Registered"}
 
+
 @router.post("/login")
 def login(user: UserLogin, response: Response, db: Session = Depends(get_db)):
     db_user = crud_user.get_user_by_username(db, user.username)
@@ -25,6 +36,7 @@ def login(user: UserLogin, response: Response, db: Session = Depends(get_db)):
     token = serializer.dumps(user.username)
     response.set_cookie(key="auth_token", value=token, httponly=True)
     return {"message": "Login successful"}
+
 
 @router.post("/logout")
 def logout(response: Response):
