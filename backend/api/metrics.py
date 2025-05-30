@@ -33,12 +33,15 @@ async def receive_metrics(websocket: WebSocket, db: Session = Depends(get_db)):
             agent = add_agent(db, metrics.hostname, metrics.username)
 
         ws_manager.connect(agent.id, websocket)
+        save_metrics(db, agent.id, metrics.dict())
 
         await websocket.send_json({
             "type": "setTime",
             "data": {"update_time": agent.update_time}
         })
     except (json.JSONDecodeError, ValidationError) as e:
+        print(e)
+    except WebSocketDisconnect as e:
         print(e)
 
     try:
@@ -49,8 +52,12 @@ async def receive_metrics(websocket: WebSocket, db: Session = Depends(get_db)):
             except (json.JSONDecodeError, ValidationError) as e:
                 print(e)
                 continue
+            except Exception as e:
+                print(e)
+                return
 
             save_metrics(db, agent.id, metrics.dict())
 
     except WebSocketDisconnect:
         ws_manager.disconnect(agent.id)
+        print("WebSocket disconnected")
