@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"os"
 	"os/exec"
@@ -77,8 +78,13 @@ func StartWebSocketClient(ctx context.Context) error {
 func handleIncomingMessages(ctx context.Context, conn *websocket.Conn) {
 	for {
 		var ctrlMsg ControlMessage
-		if err := wsjson.Read(ctx, conn, &ctrlMsg); err != nil {
-			fmt.Println("Помилка читання з WebSocket:", err)
+		err := wsjson.Read(ctx, conn, &ctrlMsg)
+		if err != nil {
+			if errors.Is(err, context.Canceled) {
+				fmt.Println("З'єднання завершено: контекст скасовано.")
+			} else {
+				fmt.Println("Помилка читання з WebSocket:", err)
+			}
 			return
 		}
 
