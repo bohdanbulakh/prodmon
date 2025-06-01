@@ -5,7 +5,7 @@ from typing import List, Dict
 class ProcessInfo(BaseModel):
     pid: int
     name: str
-    memory_used_mb: int
+    memory_used_mb: float
     memory_used_percent: float
 
 
