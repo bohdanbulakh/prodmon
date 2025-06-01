@@ -63,7 +63,10 @@ func TestCollectMetrics_ProcessesNotEmpty(t *testing.T) {
 	if first.Name == "" {
 		t.Errorf("Name процесу не повинен бути порожнім")
 	}
-	if first.MemoryMB <= 0 {
-		t.Errorf("MemoryMB має бути більше 0, отримано: %f", first.MemoryMB)
+	if first.MemoryUsedMB <= 0 {
+		t.Errorf("MemoryUsedMB має бути більше 0, отримано: %f", first.MemoryUsedMB)
+	}
+	if first.MemoryUsedPercent < 0 || first.MemoryUsedPercent > 100 {
+		t.Errorf("MemoryUsedPercent має бути в межах 0–100, отримано: %f", first.MemoryUsedPercent)
 	}
 }
