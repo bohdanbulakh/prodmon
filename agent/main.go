@@ -1,28 +1,29 @@
 package main
 
 import (
+	"context"
 	"fmt"
-	"time"
+	"os"
+	"os/signal"
+	"syscall"
 )
 
 func main() {
 	fmt.Println("Агент запущено.")
 
-	ticker := time.NewTicker(5 * time.Second)
-	defer ticker.Stop()
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
 
-	for range ticker.C {
-		metrics, err := CollectMetrics()
-		if err != nil {
-			fmt.Println("Помилка збору метрик:", err)
-			continue
-		}
+	go func() {
+		c := make(chan os.Signal, 1)
+		signal.Notify(c, os.Interrupt, syscall.SIGTERM)
+		<-c
+		fmt.Println("Отримано сигнал завершення. Вихід...")
+		cancel()
+	}()
 
-		err = SendMetrics(metrics)
-		if err != nil {
-			fmt.Println("Помилка відправки метрик:", err)
-		} else {
-			fmt.Println("Метрики успішно надіслано.")
-		}
+	err := StartWebSocketClient(ctx)
+	if err != nil {
+		fmt.Println("WebSocket клієнт завершився з помилкою:", err)
 	}
 }

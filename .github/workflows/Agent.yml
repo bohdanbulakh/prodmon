@@ -28,7 +28,7 @@ jobs:
         uses: docker/build-push-action@v6
         with:
           context: agent
-          tags: bohdanbulakh/mtsd-lab4-agent
+          tags: bohdanbulakh/prodmon-agent
           push: true
           platforms: linux/amd64
 
