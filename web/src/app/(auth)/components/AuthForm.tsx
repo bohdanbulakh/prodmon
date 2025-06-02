@@ -28,7 +28,7 @@ import {
   ReactElement,
 } from 'react';
 
-const formSchema = z.object({
+export const formSchema = z.object({
   username: z.string(),
   password: z
     .string()
