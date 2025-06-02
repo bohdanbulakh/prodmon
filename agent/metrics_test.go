@@ -53,6 +53,20 @@ func TestCollectMetrics_TotalMemory(t *testing.T) {
 func TestCollectMetrics_ProcessesNotEmpty(t *testing.T) {
 	metrics, _ := CollectMetrics()
 	if len(metrics.Processes) == 0 {
-		t.Errorf("Список процесів не повинен бути порожнім")
+		t.Fatalf("Список процесів не повинен бути порожнім")
+	}
+
+	first := metrics.Processes[0]
+	if first.PID <= 0 {
+		t.Errorf("PID має бути більше 0, отримано: %d", first.PID)
+	}
+	if first.Name == "" {
+		t.Errorf("Name процесу не повинен бути порожнім")
+	}
+	if first.MemoryUsedMB <= 0 {
+		t.Errorf("MemoryUsedMB має бути більше 0, отримано: %f", first.MemoryUsedMB)
+	}
+	if first.MemoryUsedPercent < 0 || first.MemoryUsedPercent > 100 {
+		t.Errorf("MemoryUsedPercent має бути в межах 0–100, отримано: %f", first.MemoryUsedPercent)
 	}
 }
