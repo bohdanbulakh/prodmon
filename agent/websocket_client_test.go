@@ -167,6 +167,7 @@ func TestStartWebSocketClient_HandlesSendSignal(t *testing.T) {
 	wsURL := "ws" + srv.URL[len("http"):]
 
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+
 	defer cancel()
 
 	original := wsURLGlobal

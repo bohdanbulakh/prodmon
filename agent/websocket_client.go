@@ -60,13 +60,17 @@ func StartWebSocketClient(ctx context.Context) error {
 		select {
 		case <-ctx.Done():
 			return nil
+
 		case <-time.After(time.Duration(updateInterval.Load()) * time.Second):
+
 			metrics, err := CollectMetrics()
 			if err != nil {
 				fmt.Println("Помилка збору метрик:", err)
 				continue
 			}
+
 			if err := wsjson.Write(ctx, conn, metrics); err != nil {
+
 				fmt.Println("Помилка надсилання метрик через WebSocket:", err)
 			} else {
 				fmt.Println("Метрики надіслано через WebSocket.")

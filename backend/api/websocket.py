@@ -28,16 +28,24 @@ async def websocket_metrics(websocket: WebSocket, agent_id: int, db: Session = D
             agent = db.query(Agent).filter_by(id=agent_id).first()
             db.refresh(agent)
             if not agent or not agent.metrics:
-                await websocket.close()
+                await websocket.close(code=1008, reason="Agent or metrics not found")
                 break
-            await websocket.send_json({
-                "hostname": agent.hostname,
-                "cpu_usage_percent": agent.metrics.cpu_usage_percent,
-                "memory_used_mb": agent.metrics.memory_used_mb,
-                "memory_used_percent": agent.metrics.memory_used_percent,
-                "memory_max": agent.metrics.memory_max,
-                "processes": agent.metrics.processes,
-            })
+
+            try:
+                await websocket.send_json({
+                    "hostname": agent.hostname,
+                    "cpu_usage_percent": agent.metrics.cpu_usage_percent,
+                    "memory_used_mb": agent.metrics.memory_used_mb,
+                    "memory_used_percent": agent.metrics.memory_used_percent,
+                    "memory_max": agent.metrics.memory_max,
+                    "processes": agent.metrics.processes,
+                })
+            except WebSocketDisconnect as e:
+                print(f"Client disconnected: code={e.code}, reason={e.reason}")
+                break
+            except Exception as e:
+                print(e)
+                break
             await asyncio.sleep(agent.update_time)
-    except WebSocketDisconnect:
-        print("WebSocket disconnected")
+    finally:
+        print("Client connection closed")
