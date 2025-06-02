@@ -22,7 +22,7 @@ type ControlMessage struct {
 }
 
 type TimeDTO struct {
-	Time int `json:"time"`
+	Time int `json:"update_time"`
 }
 
 type SignalDTO struct {
@@ -40,7 +40,7 @@ func getWebSocketURL() string {
 	if url := os.Getenv("API_URL"); url != "" {
 		return url
 	}
-	return "ws://localhost:8000/ws"
+	return "ws://localhost:8000/metrics"
 }
 
 func StartWebSocketClient(ctx context.Context) error {

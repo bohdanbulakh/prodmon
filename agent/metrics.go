@@ -1,14 +1,17 @@
 package main
 
 import (
+	"github.com/joho/godotenv"
 	"github.com/shirou/gopsutil/v3/cpu"
 	"github.com/shirou/gopsutil/v3/mem"
 	"github.com/shirou/gopsutil/v3/process"
+	"log"
 	"os"
 )
 
 type Metrics struct {
 	HostName          string        `json:"hostname"`
+	UserName          string        `json:"username"`
 	CPUUsagePercent   float64       `json:"cpu_usage_percent"`
 	MemoryUsedMB      uint64        `json:"memory_used_mb"`
 	MemoryUsedPercent float64       `json:"memory_used_percent"`
@@ -24,6 +27,11 @@ type ProcessInfo struct {
 }
 
 func CollectMetrics() (*Metrics, error) {
+	err := godotenv.Load()
+	if err != nil {
+		log.Fatal("Error loading .env file")
+	}
+
 	hostName, err := os.Hostname()
 	if err != nil {
 		hostName = "unknown"
@@ -69,6 +77,7 @@ func CollectMetrics() (*Metrics, error) {
 
 	metrics := &Metrics{
 		HostName:          hostName,
+		UserName:          os.Getenv("METRICS_USERNAME"),
 		CPUUsagePercent:   cpuPercentage[0],
 		MemoryUsedMB:      vmStat.Used / 1024 / 1024,
 		MemoryUsedPercent: vmStat.UsedPercent,

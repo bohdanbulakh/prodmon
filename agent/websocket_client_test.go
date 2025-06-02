@@ -79,7 +79,7 @@ func TestStartWebSocketClient_HandlesSetTime(t *testing.T) {
 				controlMsg := map[string]any{
 					"type": "setTime",
 					"data": map[string]any{
-						"time": 1,
+						"update_time": 1,
 					},
 				}
 				b, _ := json.Marshal(controlMsg)
