@@ -1,12 +1,8 @@
 export class MetricsResponse {
-  [hostname: string]: Metrics;
-}
-
-export interface Metrics {
+  hostname: string;
   cpu_usage_percent: number;
   memory_used_mb: number;
   memory_used_percent: number;
-  processes: string[];
-  time: string;
   memory_max: number;
+  processes: string[];
 }

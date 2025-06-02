@@ -1,18 +1,18 @@
 'use client';
 
-import { Metrics } from '@/lib/responses/metrics.response';
+import { MetricsResponse } from '@/lib/responses/metrics.response';
 import { useCallback } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Area, AreaChart, CartesianGrid, ResponsiveContainer, Tooltip, TooltipProps, XAxis, YAxis } from 'recharts';
 
 type ChartProps = {
-  data: Metrics[];
-  dataKey: keyof Metrics;
+  data: MetricsResponse[];
+  dataKey: keyof MetricsResponse;
   color: string;
   label: string;
   max?: number;
   tooltip: {
-    key: keyof Metrics;
+    key: keyof MetricsResponse;
     title: string;
   }[];
 }

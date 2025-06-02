@@ -1,9 +1,9 @@
 import { client } from './instance';
-import { AgentsDto } from '@/lib/dtos/agents.dto';
+import { AgentsResponse } from '@/lib/responses/agents.response';
 
 class AgentAPI {
   async getByUser () {
-    const { data } = await client.get<AgentsDto>('/agents');
+    const { data } = await client.get<AgentsResponse>('/agents');
     return data;
   }
 }
