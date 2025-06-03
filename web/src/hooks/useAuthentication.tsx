@@ -1,17 +1,17 @@
-import { useContext } from 'react';
-import { AuthenticationContext } from '@/lib/providers/authentication/AuthenticationProvider';
+import AuthAPI from '@/lib/api/AuthAPI';
+import { useQuery } from '@tanstack/react-query';
 
 
 export const useAuthentication = () => {
-  const context = useContext(AuthenticationContext);
-  if (!context) {
-    throw new Error(
-      'useAuthenticationContext must be used within an AuthenticationProvider',
-    );
-  }
+  const { isLoading, isSuccess, refetch } = useQuery({
+    queryKey: ['user'],
+    queryFn: AuthAPI.me,
+    retry: false,
+  });
 
   return {
-    loggedIn: context.loggedIn,
-    isLoading: context.isLoading,
+    loggedIn: isSuccess,
+    isLoading,
+    refetch,
   };
 };
