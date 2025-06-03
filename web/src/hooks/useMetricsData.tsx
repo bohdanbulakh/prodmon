@@ -42,11 +42,10 @@ export const useMetricsData = (wsUrl: string) => {
   useEffect(() => {
     if (error || !lastJsonMessage) return;
 
-    const { processes, ...data } = lastJsonMessage as MetricsResponse;
+    const data = lastJsonMessage as MetricsResponse;
     const entry: MetricsResponse & { time: string } = {
       ...data,
       time: new Date().toISOString(),
-      processes: processes.sort(),
     };
 
     setMetricsHistory(prev => {

@@ -9,6 +9,8 @@ import { Separator } from '@/components/ui/separator';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { useEffect } from 'react';
+import { ProcessesList } from '@/lib/responses/metrics.response';
+import { useAuthentication } from '@/hooks/useAuthentication';
 
 const COLORS = {
   cpu: '#8884d8',
@@ -17,32 +19,34 @@ const COLORS = {
 };
 
 type MetricsPageProps = {
-  hostname: string;
+  agentId: string;
   apiUrl: string;
 };
 
-export function MetricsPage ({ hostname, apiUrl }: MetricsPageProps) {
+export function MetricsPage ({ agentId, apiUrl }: MetricsPageProps) {
   const protocol = typeof window !== 'undefined' && window.location.protocol === 'https:' ? 'wss' : 'ws';
-  const url = `${protocol}://${apiUrl}/metrics/${hostname}`;
+  const url = `${protocol}://${apiUrl}/metrics/${agentId}`;
 
   const { metricsHistory: history, error } = useMetricsData(url);
+  const { loggedIn, isLoading } = useAuthentication()
   const router = useRouter();
 
   useEffect(() => {
+    if (!isLoading && !loggedIn) router.push('/');
     if (error) {
       toast.error(error.message);
       router.push('/');
     }
-  }, [error]);
+  }, [error, loggedIn, isLoading]);
 
   const metrics = history[history.length - 1];
   const maxMemoryMb = metrics?.memory_max;
 
   return (
-    <Card key={hostname}>
+    <Card key={agentId}>
       <CardHeader>
         <CardTitle className="text-xl font-bold flex items-center justify-between">
-          {hostname}
+          {metrics?.hostname}
         </CardTitle>
       </CardHeader>
 
@@ -76,16 +80,16 @@ export function MetricsPage ({ hostname, apiUrl }: MetricsPageProps) {
             <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead className="w-[50px]">#</TableHead>
+                  <TableHead className="w-[50px]">PID</TableHead>
                   <TableHead>Process Name</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
                 {metrics?.processes?.length > 0 ? (
-                  metrics.processes.map((proc: string, idx: number) => (
+                  metrics.processes.map(({ pid, name }: ProcessesList, idx: number) => (
                     <TableRow key={idx}>
-                      <TableCell>{idx + 1}</TableCell>
-                      <TableCell>{proc}</TableCell>
+                      <TableCell>{pid}</TableCell>
+                      <TableCell>{name}</TableCell>
                     </TableRow>
                   ))
                 ) : (
