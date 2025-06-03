@@ -10,4 +10,6 @@ export class MetricsResponse {
 export class ProcessesList {
   pid: number;
   name: string;
+  memory_used_mb: number;
+  memory_used_percent: number;
 }
