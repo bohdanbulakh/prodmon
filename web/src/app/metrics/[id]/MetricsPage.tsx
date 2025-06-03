@@ -11,6 +11,7 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 import { useEffect } from 'react';
 import { ProcessesList } from '@/lib/responses/metrics.response';
 import { useAuthentication } from '@/hooks/useAuthentication';
+import { round } from '@/lib/utils';
 
 const COLORS = {
   cpu: '#8884d8',
@@ -80,16 +81,18 @@ export function MetricsPage ({ agentId, apiUrl }: MetricsPageProps) {
             <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead className="w-[50px]">PID</TableHead>
-                  <TableHead>Process Name</TableHead>
+                  <TableHead className="w-[40px] min-w-fit">PID</TableHead>
+                  <TableHead className="w-1/3 min-w-fit">Process Name</TableHead>
+                  <TableHead>Memory Used, %</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
                 {metrics?.processes?.length > 0 ? (
-                  metrics.processes.map(({ pid, name }: ProcessesList, idx: number) => (
+                  metrics.processes.map(({ pid, name, memory_used_percent }: ProcessesList, idx: number) => (
                     <TableRow key={idx}>
                       <TableCell>{pid}</TableCell>
                       <TableCell>{name}</TableCell>
+                      <TableCell>{round(memory_used_percent, 3)}</TableCell>
                     </TableRow>
                   ))
                 ) : (
