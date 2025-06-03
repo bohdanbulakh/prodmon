@@ -38,7 +38,7 @@ export default function LoginForm () {
       button="Увійти"
       OtherAuth={
         <div className="mt-8 text-center text-base">
-          Ще не зареєстровані?
+          {'Ще не зареєстровані?\t'}
           <Link href="/register" className="underline">
             Реєстрація
           </Link>
