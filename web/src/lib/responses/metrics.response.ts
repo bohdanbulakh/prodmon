@@ -4,5 +4,10 @@ export class MetricsResponse {
   memory_used_mb: number;
   memory_used_percent: number;
   memory_max: number;
-  processes: string[];
+  processes: ProcessesList[];
+}
+
+export class ProcessesList {
+  pid: number;
+  name: string;
 }
