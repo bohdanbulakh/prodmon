@@ -1,12 +1,12 @@
 import { useEffect, useRef, useState } from 'react';
 import useWebSocket from 'react-use-websocket';
-import { Metrics } from '@/lib/responses/metrics.response';
+import { MetricsResponse } from '@/lib/responses/metrics.response';
 
 const MAX_POINTS = 30;
 const MAX_RECONNECT_ATTEMPTS = 3;
 
 export const useMetricsData = (wsUrl: string) => {
-  const [metricsHistory, setMetricsHistory] = useState<Metrics[]>([]);
+  const [metricsHistory, setMetricsHistory] = useState<MetricsResponse[]>([]);
   const [error, setError] = useState<Error | null>(null);
   const reconnectCount = useRef(0);
 
@@ -17,7 +17,7 @@ export const useMetricsData = (wsUrl: string) => {
     const saved = localStorage.getItem(localStorageKey);
     if (saved) {
       try {
-        const parsed = JSON.parse(saved) as Metrics[];
+        const parsed = JSON.parse(saved) as MetricsResponse[];
         setMetricsHistory(parsed);
       } catch {
         localStorage.removeItem(localStorageKey);
@@ -42,8 +42,8 @@ export const useMetricsData = (wsUrl: string) => {
   useEffect(() => {
     if (error || !lastJsonMessage) return;
 
-    const { processes, ...data } = lastJsonMessage as Omit<Metrics, 'time'>;
-    const entry: Metrics = {
+    const { processes, ...data } = lastJsonMessage as MetricsResponse;
+    const entry: MetricsResponse & { time: string } = {
       ...data,
       time: new Date().toISOString(),
       processes: processes.sort(),

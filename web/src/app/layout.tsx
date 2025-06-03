@@ -4,6 +4,7 @@ import "./globals.css";
 import { Toaster } from 'sonner';
 import { Analytics } from '@vercel/analytics/next';
 import { Providers } from '@/components/layout/Providers';
+import Header from '@/components/layout/header/Header';
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -39,7 +40,10 @@ export default function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
       <Providers>
-        {children}
+        <Header />
+        <div className="min-h-[50vh] h-full w-full items-center justify-center px-4 mt-10">
+          {children}
+        </div>
       </Providers>
       <Analytics />
       <Toaster />
