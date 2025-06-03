@@ -3,19 +3,19 @@
 import { z } from 'zod';
 import { toast } from 'sonner';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-
-import AuthApi from '@/lib/api/AuthAPI';
 import Link from 'next/link';
 import AuthForm, { formSchema } from '@/app/(auth)/components/AuthForm';
 import { useRouter } from 'next/navigation';
+import { useAuthActions } from '@/hooks/useAuthActions';
 
 export default function LoginForm () {
   const queryClient = useQueryClient();
   const router = useRouter();
+  const { login } = useAuthActions();
 
   const mutation = useMutation({
     mutationFn: async (data: z.infer<typeof formSchema>) => {
-      await AuthApi.login(data);
+      await login(data);
     },
     onSuccess: () => {
       toast.success('Вхід виконано успішно');
