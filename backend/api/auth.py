@@ -1,4 +1,4 @@
-from fastapi import APIRouter, HTTPException, Response, Depends, Cookie
+from fastapi import APIRouter, HTTPException, Response, Depends, Cookie, Request
 from passlib.hash import bcrypt
 from itsdangerous import URLSafeSerializer, BadSignature
 from models.models import User
@@ -6,6 +6,7 @@ from schemas.user import UserCreate, UserLogin
 from database import get_db
 from sqlalchemy.orm import Session
 from crud import user as crud_user
+from utils.auth import get_current_user
 
 router = APIRouter()
 serializer = URLSafeSerializer("secret-key")
@@ -42,3 +43,8 @@ def login(user: UserLogin, response: Response, db: Session = Depends(get_db)):
 def logout(response: Response):
     response.delete_cookie("auth_token")
     return {"message": "Logged out"}
+
+
+@router.get("/me")
+def me(username: str = Depends(get_current_user)):
+    return { "username": username }
