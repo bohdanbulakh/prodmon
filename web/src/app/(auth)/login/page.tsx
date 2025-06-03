@@ -33,7 +33,7 @@ export default function LoginForm () {
   return (
     <AuthForm
       title="Вхід"
-      description="Введіть свій email та пароль, щоб увійти"
+      description="Введіть свій username та пароль, щоб увійти"
       mutation={mutation}
       button="Увійти"
       OtherAuth={
