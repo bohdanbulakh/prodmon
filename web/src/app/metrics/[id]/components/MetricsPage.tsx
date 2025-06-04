@@ -6,8 +6,8 @@ import { useRouter } from 'next/navigation';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import Chart from '@/app/metrics/[id]/components/MetricsDashboard';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { ScrollArea } from '@/components/ui/scroll-area';
-import { useEffect, useRef, useState } from 'react';
+import { ScrollArea, ScrollBar } from '@/components/ui/scroll-area';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { ProcessesList } from '@/lib/responses/metrics.response';
 import { useAuthentication } from '@/hooks/useAuthentication';
 import { round } from '@/lib/utils';
@@ -16,6 +16,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import AgentAPI from '@/lib/api/AgentAPI';
 import { Label } from '@/components/ui/label';
+import TerminateDialog from '@/app/metrics/[id]/components/TerminateDialog';
 
 const COLORS = {
   cpu: '#8884d8',
@@ -49,7 +50,7 @@ export function MetricsPage ({ agentId, apiUrl }: MetricsPageProps) {
   const metrics = history[history.length - 1];
   const maxMemoryMb = metrics?.memory_max;
 
-  const handleOpenChange = async (isOpen: boolean) => {
+  const handleOpenChange = useCallback(async (isOpen: boolean) => {
     setOpen(isOpen);
 
     if (!isOpen && timeRef.current) {
@@ -63,7 +64,7 @@ export function MetricsPage ({ agentId, apiUrl }: MetricsPageProps) {
         toast.error(`Щось пішло не так: ${error}`);
       }
     }
-  };
+  }, [timeRef.current])
 
   return (
     <Card className="w-full md:w-4/5 lg:w-2/3 mx-auto">
@@ -119,45 +120,43 @@ export function MetricsPage ({ agentId, apiUrl }: MetricsPageProps) {
 
         <div>
           <h3 className="text-lg font-semibold mb-4">Процеси</h3>
-          <div className="overflow-x-auto w-full">
-            <div className="min-w-[900px]">
-              <ScrollArea className="h-100 rounded-md border">
-                <Table>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead className="w-[40px] font-bold">PID</TableHead>
-                      <TableHead className="w-1/4 font-bold">Назва процесу</TableHead>
-                      <TableHead className="w-1/4 font-bold">Використання ОП, (%)</TableHead>
-                      <TableHead className="w-1/4 font-bold">Дія</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {metrics?.processes?.length > 0 ? (
-                      metrics.processes.map(
-                        ({ pid, name, memory_used_percent }: ProcessesList, idx: number) => (
-                          <TableRow key={idx}>
-                            <TableCell>{pid}</TableCell>
-                            <TableCell>{name}</TableCell>
-                            <TableCell>{round(memory_used_percent, 3)}</TableCell>
-                            <TableCell>
-                              <Button>Зупинити</Button>
-                            </TableCell>
-                          </TableRow>
-                        ),
-                      )
-                    ) : (
-                      <TableRow>
-                        <TableCell colSpan={4} className="italic text-muted-foreground">
-                          Немає даних про процеси
+          <Table className="border">
+            <TableHeader>
+              <TableRow>
+                <TableHead className="w-[40px] font-bold">PID</TableHead>
+                <TableHead className="w-1/4 font-bold">Назва процесу</TableHead>
+                <TableHead className="w-1/4 font-bold">Використання ОП, (%)</TableHead>
+                <TableHead className="w-1/4 font-bold">Дія</TableHead>
+              </TableRow>
+            </TableHeader>
+          </Table>
+          <ScrollArea className="w-[100%] h-140">
+            <Table className="border">
+              <TableBody>
+                {metrics?.processes?.length ? (
+                  metrics.processes.map(
+                    ({ pid, name, memory_used_percent }: ProcessesList, idx: number) => (
+                      <TableRow key={idx}>
+                        <TableCell className="w-[40px]">{pid}</TableCell>
+                        <TableCell className="w-[25%]">{name}</TableCell>
+                        <TableCell className="w-[25%]">{round(memory_used_percent, 3)}</TableCell>
+                        <TableCell className="w-[25%]">
+                          <TerminateDialog pid={pid} hostname={metrics?.hostname}/>
                         </TableCell>
                       </TableRow>
-                    )}
-                  </TableBody>
-                </Table>
-              </ScrollArea>
-
-            </div>
-          </div>
+                    ),
+                  )
+                ) : (
+                  <TableRow>
+                    <TableCell colSpan={4} className="italic text-muted-foreground">
+                      Немає даних про процеси
+                    </TableCell>
+                  </TableRow>
+                )}
+              </TableBody>
+            </Table>
+            <ScrollBar orientation="horizontal"/>
+          </ScrollArea>
         </div>
       </CardContent>
     </Card>
