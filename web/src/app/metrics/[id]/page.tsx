@@ -12,5 +12,5 @@ export default async function Page ({ params }: PageProps) {
     redirect('/');
   }
 
-  return <MetricsPage agentId={id} apiUrl={process.env.NEXT_API_URL ?? 'api.prodmon.me'}/>;
+  return <MetricsPage agentId={+id} apiUrl={process.env.NEXT_API_URL ?? 'api.prodmon.me'}/>;
 }

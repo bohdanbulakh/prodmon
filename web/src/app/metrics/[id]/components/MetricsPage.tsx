@@ -23,7 +23,7 @@ const COLORS = {
 };
 
 type MetricsPageProps = {
-  agentId: string;
+  agentId: number;
   apiUrl: string;
 };
 
