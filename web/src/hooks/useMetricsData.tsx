@@ -1,14 +1,12 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
 import useWebSocket from 'react-use-websocket';
 import { MetricsResponse } from '@/lib/responses/metrics.response';
 
 const MAX_POINTS = 30;
-const MAX_RECONNECT_ATTEMPTS = 3;
 
 export const useMetricsData = (wsUrl: string) => {
   const [metricsHistory, setMetricsHistory] = useState<MetricsResponse[]>([]);
   const [error, setError] = useState<Error | null>(null);
-  const reconnectCount = useRef(0);
 
   const hostname = wsUrl.split('/').pop() ?? 'unknown';
   const localStorageKey = `metrics:${hostname}`;
@@ -19,24 +17,14 @@ export const useMetricsData = (wsUrl: string) => {
       try {
         const parsed = JSON.parse(saved) as MetricsResponse[];
         setMetricsHistory(parsed);
-      } catch {
-        localStorage.removeItem(localStorageKey);
+      } catch (error: any) {
+        setError(error);
       }
     }
   }, [localStorageKey]);
 
   const { lastJsonMessage, readyState } = useWebSocket(wsUrl, {
-    shouldReconnect: () => {
-      if (reconnectCount.current < MAX_RECONNECT_ATTEMPTS) {
-        reconnectCount.current += 1;
-        return true;
-      }
-
-      reconnectCount.current = 0;
-      localStorage.removeItem(localStorageKey);
-      setError(Error('Host disconnected'));
-      return false;
-    },
+    onError: () => setError(Error('Cannot connect to the server'))
   });
 
   useEffect(() => {
