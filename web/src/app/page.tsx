@@ -28,7 +28,7 @@ export default function Home () {
         loggedIn ?
           <Card className="mx-auto w-full max-w-1/2 min-w-fit">
             <CardHeader>
-              <h1 className="text-2xl font-bold tracking-tight">Available Hosts</h1>
+              <h1 className="text-2xl font-bold tracking-tight">Доступні хости</h1>
             </CardHeader>
             <CardContent className="grid grid-cols-1 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 min-w-fit">
               <Hostnames data={data} isLoading={isLoading}/>

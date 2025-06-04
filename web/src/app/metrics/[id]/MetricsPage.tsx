@@ -67,14 +67,14 @@ export function MetricsPage ({ agentId, apiUrl }: MetricsPageProps) {
   };
 
   return (
-    <Card key={agentId}>
+    <Card className="w-full md:w-4/5 lg:w-2/3 mx-auto">
       <CardHeader className="flex">
-        <CardTitle className="text-xl font-bold flex items-center justify-between mr-auto">
+        <CardTitle className="text-sm sm:text-base md:text-xl lg:text-2xl font-bold flex items-center justify-between mr-auto">
           {metrics?.hostname}
         </CardTitle>
         <Popover open={open} onOpenChange={handleOpenChange}>
           <PopoverTrigger asChild>
-            <Button variant="outline">Час оновлення</Button>
+            <Button variant="outline" className="text-xs sm:text-sm md:text-base lg:text-xl">Час оновлення</Button>
           </PopoverTrigger>
           <PopoverContent className="w-60">
             <div className="grid gap-4">
@@ -100,33 +100,32 @@ export function MetricsPage ({ agentId, apiUrl }: MetricsPageProps) {
             color={COLORS.cpu}
             data={history}
             dataKey="cpu_usage_percent"
-            label="CPU Usage (%)"
+            label="Використання CPU (%)"
             max={100}
-            tooltip={[{ key: 'cpu_usage_percent', title: 'CPU Usage (%)' }]}
+            tooltip={[{ key: 'cpu_usage_percent', title: 'Використання CPU (%)' }]}
           />
           <Chart
             color={COLORS.memPercent}
             data={history}
             dataKey="memory_used_mb"
-            label="Memory Usage (MB)"
+            label="Використання ОП (MB)"
             max={maxMemoryMb}
             tooltip={[
-              { key: 'memory_used_mb', title: 'Memory Usage (MB)' },
-              { key: 'memory_used_percent', title: 'Memory Usage (%)' },
+              { key: 'memory_used_mb', title: 'Використання ОП (MB)' },
+              { key: 'memory_used_percent', title: 'Використання ОП (%)' },
             ]}
           />
         </div>
 
         <div>
-          <h3 className="text-lg font-semibold mb-2">Processes</h3>
-          <Separator className="mb-4"/>
-          <ScrollArea className="h-64 rounded-md border">
+          <h3 className="text-lg font-semibold mb-4">Процеси</h3>
+          <ScrollArea className="h-100 rounded-md border">
             <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead className="w-[40px] min-w-fit">PID</TableHead>
-                  <TableHead className="w-1/3 min-w-fit">Process Name</TableHead>
-                  <TableHead>Memory Used, %</TableHead>
+                  <TableHead className="w-[40px] min-w-fit font-bold">PID</TableHead>
+                  <TableHead className="w-1/3 min-w-fit font-bold">Назва процесу</TableHead>
+                  <TableHead className="font-bold">Використання ОП, (%)</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -141,7 +140,7 @@ export function MetricsPage ({ agentId, apiUrl }: MetricsPageProps) {
                 ) : (
                   <TableRow>
                     <TableCell className="text-muted-foreground italic">
-                      No process data available
+                      Немає даних про процеси
                     </TableCell>
                   </TableRow>
                 )}
