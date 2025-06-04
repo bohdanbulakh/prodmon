@@ -2,7 +2,7 @@ from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
 
 from api.ws_manager import ws_manager
-from crud.agent import get_agent_by_username
+from crud.agent import get_agents_by_username
 from database import get_db
 from crud import agent as crud_agent
 from models.models import User
@@ -19,6 +19,11 @@ def remove_agent(data: AgentAddRemove, db: Session = Depends(get_db), username: 
     crud_agent.remove_agent(db, data.hostname, user)
     return {"message": "Agent removed"}
 
+@router.get("/agents/{agent_id}")
+def get_agent_by_id(agent_id: int, db: Session = Depends(get_db), username: str = Depends(get_current_user)):
+    user = get_user_by_username(db, username)
+    return crud_agent.get_agent_by_id(user, agent_id)
+
 
 @router.get("/agents")
 def list_agents(db: Session = Depends(get_db), username: str = Depends(get_current_user)):
@@ -30,7 +35,7 @@ def list_agents(db: Session = Depends(get_db), username: str = Depends(get_curre
 
 @router.post("/agents/setTime")
 async def set_time(data: AgentSetTime, db: Session = Depends(get_db), username: str = Depends(get_current_user)):
-    agent = get_agent_by_username(db, username, data)
+    agent = get_agents_by_username(db, username, data)
     crud_agent.set_time(db, agent.id, data.dict())
 
     command = {
@@ -43,7 +48,7 @@ async def set_time(data: AgentSetTime, db: Session = Depends(get_db), username: 
 @router.post("/agents/sendSignal")
 async def send_process_signal(data: AgentSendSignal, db: Session = Depends(get_db),
                               username: str = Depends(get_current_user)):
-    agent = get_agent_by_username(db, username, data)
+    agent = get_agents_by_username(db, username, data)
 
     command = {
         "type": "sendSignal",

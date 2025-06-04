@@ -5,14 +5,25 @@ from models.models import Agent, Metrics, User
 from sqlalchemy.orm import Session
 
 
-def get_agent_by_username(db, username, data):
+def get_agents_by_username(db, username, data):
     user = db.query(User).filter_by(username=username).first()
     if data.hostname not in [agent.hostname for agent in user.agents]:
         raise HTTPException(status_code=403, detail="Forbidden access")
 
     user_agents = [agent.hostname for agent in user.agents]
-    agent = user.agents[user_agents.index(data.hostname)]
-    return agent
+    agents = user.agents[user_agents.index(data.hostname)]
+    return agents
+
+def get_agent_by_id(user, agent_id: int):
+    if agent_id not in [agent.id for agent in user.agents]:
+        raise HTTPException(status_code=403, detail="Forbidden access")
+
+    agent = list(filter(lambda x: x.id == agent_id, user.agents))[0]
+    return {
+        "id": agent.id,
+        "hostname": agent.hostname,
+        "update_time": agent.update_time,
+    }
 
 
 def add_agent(db: Session, hostname: str, username: str):
