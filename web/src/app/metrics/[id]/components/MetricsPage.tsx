@@ -4,8 +4,7 @@ import { useMetricsData } from '@/hooks/useMetricsData';
 import { toast } from 'sonner';
 import { useRouter } from 'next/navigation';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import Chart from '@/components/common/MetricsDashboard';
-import { Separator } from '@/components/ui/separator';
+import Chart from '@/app/metrics/[id]/components/MetricsDashboard';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { useEffect, useRef, useState } from 'react';
@@ -59,7 +58,7 @@ export function MetricsPage ({ agentId, apiUrl }: MetricsPageProps) {
           hostname: metrics.hostname,
           update_time: +timeRef.current.value,
         });
-        toast.success("Час оновлення метрик успішно змінено")
+        toast.success('Час оновлення метрик успішно змінено');
       } catch (error) {
         toast.error(`Щось пішло не так: ${error}`);
       }
@@ -69,7 +68,8 @@ export function MetricsPage ({ agentId, apiUrl }: MetricsPageProps) {
   return (
     <Card className="w-full md:w-4/5 lg:w-2/3 mx-auto">
       <CardHeader className="flex">
-        <CardTitle className="text-sm sm:text-base md:text-xl lg:text-2xl font-bold flex items-center justify-between mr-auto">
+        <CardTitle
+          className="text-sm sm:text-base md:text-xl lg:text-2xl font-bold flex items-center justify-between mr-auto">
           {metrics?.hostname}
         </CardTitle>
         <Popover open={open} onOpenChange={handleOpenChange}>
@@ -119,34 +119,45 @@ export function MetricsPage ({ agentId, apiUrl }: MetricsPageProps) {
 
         <div>
           <h3 className="text-lg font-semibold mb-4">Процеси</h3>
-          <ScrollArea className="h-100 rounded-md border">
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead className="w-[40px] min-w-fit font-bold">PID</TableHead>
-                  <TableHead className="w-1/3 min-w-fit font-bold">Назва процесу</TableHead>
-                  <TableHead className="font-bold">Використання ОП, (%)</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {metrics?.processes?.length > 0 ? (
-                  metrics.processes.map(({ pid, name, memory_used_percent }: ProcessesList, idx: number) => (
-                    <TableRow key={idx}>
-                      <TableCell>{pid}</TableCell>
-                      <TableCell>{name}</TableCell>
-                      <TableCell>{round(memory_used_percent, 3)}</TableCell>
+          <div className="overflow-x-auto w-full">
+            <div className="min-w-[900px]">
+              <ScrollArea className="h-100 rounded-md border">
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead className="w-[40px] font-bold">PID</TableHead>
+                      <TableHead className="w-1/4 font-bold">Назва процесу</TableHead>
+                      <TableHead className="w-1/4 font-bold">Використання ОП, (%)</TableHead>
+                      <TableHead className="w-1/4 font-bold">Дія</TableHead>
                     </TableRow>
-                  ))
-                ) : (
-                  <TableRow>
-                    <TableCell className="text-muted-foreground italic">
-                      Немає даних про процеси
-                    </TableCell>
-                  </TableRow>
-                )}
-              </TableBody>
-            </Table>
-          </ScrollArea>
+                  </TableHeader>
+                  <TableBody>
+                    {metrics?.processes?.length > 0 ? (
+                      metrics.processes.map(
+                        ({ pid, name, memory_used_percent }: ProcessesList, idx: number) => (
+                          <TableRow key={idx}>
+                            <TableCell>{pid}</TableCell>
+                            <TableCell>{name}</TableCell>
+                            <TableCell>{round(memory_used_percent, 3)}</TableCell>
+                            <TableCell>
+                              <Button>Зупинити</Button>
+                            </TableCell>
+                          </TableRow>
+                        ),
+                      )
+                    ) : (
+                      <TableRow>
+                        <TableCell colSpan={4} className="italic text-muted-foreground">
+                          Немає даних про процеси
+                        </TableCell>
+                      </TableRow>
+                    )}
+                  </TableBody>
+                </Table>
+              </ScrollArea>
+
+            </div>
+          </div>
         </div>
       </CardContent>
     </Card>

@@ -4,8 +4,8 @@ import { Card, CardHeader, CardContent } from '@/components/ui/card';
 import { useQuery } from '@tanstack/react-query';
 import AgentAPI from '@/lib/api/AgentAPI';
 import { useAuthentication } from '@/hooks/useAuthentication';
-import ProjectInfo from '@/components/common/ProjectInfo';
-import Hostnames from '@/components/common/Hostnames';
+import ProjectInfo from '@/app/(main)/components/ProjectInfo';
+import Hostnames from '@/app/(main)/components/Hostnames';
 
 export default function Home () {
   const { loggedIn } = useAuthentication();

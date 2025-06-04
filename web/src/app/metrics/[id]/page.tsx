@@ -1,5 +1,5 @@
 import { redirect } from 'next/navigation';
-import { MetricsPage } from '@/app/metrics/[id]/MetricsPage';
+import { MetricsPage } from '@/app/metrics/[id]/components/MetricsPage';
 
 type PageProps = {
   params: Promise<{ id: string }>
