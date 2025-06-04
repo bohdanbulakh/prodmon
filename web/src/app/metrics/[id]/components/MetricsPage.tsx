@@ -89,10 +89,10 @@ export function MetricsPage ({ agentId, apiUrl }: MetricsPageProps) {
           <PopoverTrigger asChild>
             <Button variant="outline" className="text-xs sm:text-sm md:text-base lg:text-xl">Час оновлення</Button>
           </PopoverTrigger>
-          <PopoverContent className="w-60">
+          <PopoverContent className="w-50">
             <div className="grid gap-4">
-              <Label className=" text-sm">
-                Встановіть час оновлення метрик для агента
+              <Label className="text-sm">
+                Час оновлення метрик агента, с
               </Label>
               <Input
                 id="update-time"
