@@ -8,10 +8,15 @@ import Chart from '@/components/common/MetricsDashboard';
 import { Separator } from '@/components/ui/separator';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { useEffect } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { ProcessesList } from '@/lib/responses/metrics.response';
 import { useAuthentication } from '@/hooks/useAuthentication';
 import { round } from '@/lib/utils';
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import AgentAPI from '@/lib/api/AgentAPI';
+import { Label } from '@/components/ui/label';
 
 const COLORS = {
   cpu: '#8884d8',
@@ -29,8 +34,10 @@ export function MetricsPage ({ agentId, apiUrl }: MetricsPageProps) {
   const url = `${protocol}://${apiUrl}/metrics/${agentId}`;
 
   const { metricsHistory: history, error } = useMetricsData(url);
-  const { loggedIn, isLoading } = useAuthentication()
+  const { loggedIn, isLoading } = useAuthentication();
   const router = useRouter();
+  const [open, setOpen] = useState(false);
+  const timeRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     if (!isLoading && !loggedIn) router.push('/');
@@ -43,12 +50,48 @@ export function MetricsPage ({ agentId, apiUrl }: MetricsPageProps) {
   const metrics = history[history.length - 1];
   const maxMemoryMb = metrics?.memory_max;
 
+  const handleOpenChange = async (isOpen: boolean) => {
+    setOpen(isOpen);
+
+    if (!isOpen && timeRef.current) {
+      try {
+        await AgentAPI.setTime({
+          hostname: metrics.hostname,
+          update_time: +timeRef.current.value,
+        });
+        toast.success("Час оновлення метрик успішно змінено")
+      } catch (error) {
+        toast.error(`Щось пішло не так: ${error}`);
+      }
+    }
+  };
+
   return (
     <Card key={agentId}>
-      <CardHeader>
-        <CardTitle className="text-xl font-bold flex items-center justify-between">
+      <CardHeader className="flex">
+        <CardTitle className="text-xl font-bold flex items-center justify-between mr-auto">
           {metrics?.hostname}
         </CardTitle>
+        <Popover open={open} onOpenChange={handleOpenChange}>
+          <PopoverTrigger asChild>
+            <Button variant="outline">Час оновлення</Button>
+          </PopoverTrigger>
+          <PopoverContent className="w-60">
+            <div className="grid gap-4">
+              <Label className=" text-sm">
+                Встановіть час оновлення метрик для агента
+              </Label>
+              <Input
+                id="width"
+                type="number"
+                min={1}
+                defaultValue="5"
+                className="col-span-2 h-8"
+                ref={timeRef}
+              />
+            </div>
+          </PopoverContent>
+        </Popover>
       </CardHeader>
 
       <CardContent className="space-y-6">
