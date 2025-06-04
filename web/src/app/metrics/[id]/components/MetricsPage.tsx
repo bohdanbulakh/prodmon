@@ -119,11 +119,8 @@ export function MetricsPage ({ agentId, apiUrl }: MetricsPageProps) {
         </div>
         <div>
           <h3 className="text-lg font-semibold">Процеси</h3>
-          <ScrollArea className="w-[100%]">
             <DataTable hostname={metrics?.hostname}
                        data={metrics?.processes?.map(({ memory_used_mb, ...data }: ProcessesList) => data) ?? []}/>
-            <ScrollBar orientation="horizontal"/>
-          </ScrollArea>
         </div>
       </CardContent>
     </Card>
