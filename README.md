@@ -1,9 +1,7 @@
-# mtsd-lab4
+# ProdMon
 
-A demo app which can help you to monitor the productivity of your devices.
-The public version of this app you can find here: [mtsd-lab4.pp.ua](https://mtsd-lab4.pp.ua).
-This app also has
-a [design document](https://docs.google.com/document/d/1JiTa95BDCxQ920XYMK0kZlekctKPPOIN605cFAiRtZc/edit?usp=sharing).
+The app which can help you to monitor the productivity of your devices.
+The public version of this app you can find here: [prodmon.me](https://prodmon.me).
 
 ## Table of Contents
 
@@ -18,46 +16,61 @@ a [design document](https://docs.google.com/document/d/1JiTa95BDCxQ920XYMK0kZlek
 
 ## Introduction
 
-This project can help you to monitor the performance of CPU, RAM and get a list of processes. It's a multiservice web
-application comprising several components developed in different programming languages, including TypeScript, Python and
-Go.
+This project can help you to monitor the performance of CPU, RAM and get a list of processes. You can also change
+metrics update time and terminate processes It's a multiservice web application comprising several components developed
+in different programming languages, including TypeScript, Python and Go.
 
 ## Project Structure
 
 ```
 .
 ├── agent
-├── api
+├── backend
+│   ├── api
+│   ├── crud
+│   ├── models
+│   ├── schemas
+│   └── utils
 └── web
     ├── public
     └── src
         ├── app
+        │   ├── (auth)
+        │   │   ├── components
+        │   │   ├── login
+        │   │   └── register
+        │   ├── (main)
+        │   │   └── components
         │   └── metrics
-        │       └── [hostname]
+        │       └── [id]
+        │           └── components
         ├── components
-        │   ├── common
+        │   ├── layout
+        │   │   └── header
         │   └── ui
         ├── hooks
         └── lib
+            ├── api
+            ├── dtos
             └── responses
 
-15 directories
+30 directories
 ```
 
 The repository is organized into the following directories:
 
-* `agent/`: Contains the agent implemented in Go.
-* `api/`: Houses the API service developed in Python.
-* `web/`: Includes the frontend application built with NextJS.
-* `.github/workflows/`: Contains GitHub Actions workflows for CI/CD.
+* `agent`: Contains the agent implemented in Go.
+* `api`: Houses the API service developed in Python.
+* `web`: Includes the frontend application built with NextJS.
+* `.github/workflows`: Contains GitHub Actions workflows for CI/CD.
 
 ## Installation
 
 1. **Clone the repository:**
 
    ```bash
-   git clone https://github.com/bohdanbulakh/mtsd-lab4.git
-   cd mtsd-lab4
+   git clone https://github.com/bohdanbulakh/prodmon.git
+   cd prodmon
    ```
 
 2. **Set up each component:**
@@ -155,5 +168,3 @@ After setting up all components:
 * [bohdanbulakh](https://github.com/bohdanbulakh)
 * [VaL2111](https://github.com/VaL2111)
 * [vladosadchuk](https://github.com/vladosadchuk)
-
-For more information, visit the deployed application at [https://mtsd-lab4.vercel.app](https://mtsd-lab4.vercel.app).
