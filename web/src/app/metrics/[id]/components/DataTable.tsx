@@ -27,6 +27,8 @@ import {
 import TerminateDialog from '@/app/metrics/[id]/components/TerminateDialog';
 import { useMemo, useState } from 'react';
 import { round } from '@/lib/utils';
+import { ScrollArea } from '@radix-ui/react-scroll-area';
+import { ScrollBar } from '@/components/ui/scroll-area';
 
 export type ProcessInfo = {
   pid: number;
@@ -64,7 +66,7 @@ export default function DataTableDemo ({ data, hostname }: Props) {
         </Button>;
       },
       cell: ({ row }) => (
-        <div className="capitalize">{row.getValue('pid')}</div>
+        <div className="pl-3">{row.getValue('pid')}</div>
       ),
     },
     {
@@ -82,7 +84,7 @@ export default function DataTableDemo ({ data, hostname }: Props) {
           </Button>
         );
       },
-      cell: ({ row }) => <div className="lowercase">{row.getValue('name')}</div>,
+      cell: ({ row }) => <div className="pl-3">{row.getValue('name')}</div>,
     },
     {
       accessorKey: 'memory_used_percent',
@@ -99,7 +101,7 @@ export default function DataTableDemo ({ data, hostname }: Props) {
       },
       cell: ({ row }) => {
         const data = round(Number.parseFloat(row.getValue('memory_used_percent')), 3);
-        return <div className="font-medium">{data}</div>;
+        return <div className="pl-4">{data}</div>;
       },
     },
     {
@@ -146,7 +148,7 @@ export default function DataTableDemo ({ data, hostname }: Props) {
           className="max-w-sm"
         />
       </div>
-      <div className="border rounded-md">
+      <ScrollArea className="w-[100%] border rounded-md">
         <Table>
           <TableHeader>
             {table.getHeaderGroups().map((headerGroup) => (
@@ -192,8 +194,9 @@ export default function DataTableDemo ({ data, hostname }: Props) {
             )}
           </TableBody>
         </Table>
-      </div>
-      <div className="flex justify-end items-center space-x-2 mt-4">
+        <ScrollBar orientation="horizontal"/>
+      </ScrollArea>
+      <div className="flex justify-center items-center space-x-2 mt-4">
         <Button
           variant="outline"
           size="icon"
@@ -211,7 +214,7 @@ export default function DataTableDemo ({ data, hostname }: Props) {
           <ChevronLeft className="h-4 w-4"/>
         </Button>
         <span className="text-sm text-muted-foreground px-2">
-          Сторінка {table.getState().pagination.pageIndex + 1} з {table.getPageCount()}
+          {table.getState().pagination.pageIndex + 1} з {table.getPageCount()}
         </span>
         <Button
           variant="outline"
