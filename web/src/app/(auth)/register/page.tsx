@@ -24,7 +24,7 @@ export default function RegisterForm () {
     },
     onError: (error: any) => {
       const message =
-        error.response?.data?.message ||
+        error.response?.data?.detail ||
         'Не вдалося створити обліковий запис. Спробуйте пізніше';
       toast.error(message);
     },

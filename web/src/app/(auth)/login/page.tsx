@@ -24,7 +24,7 @@ export default function LoginForm () {
     },
     onError: (error: any) => {
       const message =
-        error.response?.data?.message ||
+        error.response?.data?.detail ||
         'Не вдалося увійти. Спробуйте пізніше';
       toast.error(message);
     },
