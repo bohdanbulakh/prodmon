@@ -1,13 +1,14 @@
+'use client';
+
 import {
-  Dialog, DialogClose,
-  DialogContent,
-  DialogDescription, DialogFooter,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from '@/components/ui/dialog';
-import { Button } from '@/components/ui/button';
-import { useCallback, useState } from 'react';
+  AlertDialog, AlertDialogAction, AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription, AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from '@/components/ui/alert-dialog';
+import { PropsWithChildren, useCallback, useRef } from 'react';
 import AgentAPI from '@/lib/api/AgentAPI';
 import { toast } from 'sonner';
 import {
@@ -17,60 +18,60 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
+import { ProcessSignalType } from '@/lib/dtos/process-signal.dto';
 
 type Props = {
   pid: number;
   hostname?: string;
-}
+} & PropsWithChildren;
 
-export default function TerminateDialog ({ pid, hostname }: Props) {
-  const [selectedMethod, setSelectedMethod] = useState<'KILL' | 'TERM' | null>(null);
+export default function TerminateDialog ({ pid, hostname, children }: Props) {
+  const selectedMethod = useRef<ProcessSignalType>('TERM');
 
   const handleTerminate = useCallback(async () => {
-    if (!hostname || !selectedMethod) return;
-
+    if (!hostname) return;
     try {
       await AgentAPI.sendSignal({
         pid,
         hostname,
-        signal: selectedMethod,
+        signal: selectedMethod.current,
       });
-      toast.success('Час оновлення метрик успішно змінено');
+      toast.success('Процес успішно зупинено');
     } catch (error) {
       toast.error(`Щось пішло не так: ${error}`);
     }
-  }, [hostname, pid, selectedMethod]);
+  }, [hostname, pid, selectedMethod.current]);
 
   return (
-    <Dialog>
+    <AlertDialog>
       <form>
-        <DialogTrigger asChild>
-          <Button>Зупинити</Button>
-        </DialogTrigger>
-        <DialogContent className="">
-          <DialogHeader>
-            <DialogTitle>Зупинити процес</DialogTitle>
-            <DialogDescription>
+        <AlertDialogTrigger asChild>{children}</AlertDialogTrigger>
+        <AlertDialogContent className="">
+          <AlertDialogHeader>
+            <AlertDialogTitle>Зупинити процес</AlertDialogTitle>
+            <AlertDialogDescription>
               Виберіть метод зупинки процесу
-            </DialogDescription>
-          </DialogHeader>
-          <Select onValueChange={value => setSelectedMethod(value as any)}>
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <Select defaultValue="TERM" onValueChange={value => {
+            selectedMethod.current = value as any;
+          }}>
             <SelectTrigger className="w-full">
               <SelectValue placeholder="Метод зупинки"/>
             </SelectTrigger>
-            <SelectContent >
-              <SelectItem value="KILL">KILL</SelectItem>
+            <SelectContent>
               <SelectItem value="TERM">TERM</SelectItem>
+              <SelectItem value="KILL">KILL</SelectItem>
             </SelectContent>
           </Select>
-          <DialogFooter className="justify-center">
-            <DialogClose asChild className="mr-auto">
-              <Button variant="outline" className="min-w-fit w-full sm:w-[50%] md:w-[50%] lg:w-[50%]">Відміна</Button>
-            </DialogClose>
-            <Button variant="destructive" className="min-w-fit w-full sm:w-[50%] md:w-[50%] lg:w-[50%]" onClick={handleTerminate}>Зупинити</Button>
-          </DialogFooter>
-        </DialogContent>
+          <AlertDialogFooter className="justify-center">
+            <AlertDialogCancel
+              className="mr-auto min-w-fit w-full sm:w-[50%] md:w-[50%] lg:w-[50%]">Відміна</AlertDialogCancel>
+            <AlertDialogAction className="min-w-fit w-full sm:w-[50%] md:w-[50%] lg:w-[50%]"
+                               onClick={handleTerminate}>Зупинити</AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
       </form>
-    </Dialog>
+    </AlertDialog>
   );
 }
