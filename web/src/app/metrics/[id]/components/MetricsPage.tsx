@@ -5,8 +5,7 @@ import { toast } from 'sonner';
 import { useRouter } from 'next/navigation';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import Chart from '@/app/metrics/[id]/components/MetricsDashboard';
-import { ScrollArea, ScrollBar } from '@/components/ui/scroll-area';
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { ProcessesList } from '@/lib/responses/metrics.response';
 import { useAuthentication } from '@/hooks/useAuthentication';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
@@ -15,6 +14,7 @@ import { Input } from '@/components/ui/input';
 import AgentAPI from '@/lib/api/AgentAPI';
 import { Label } from '@/components/ui/label';
 import DataTable from '@/app/metrics/[id]/components/DataTable';
+import { useQuery } from '@tanstack/react-query';
 
 const COLORS = {
   cpu: '#8884d8',
@@ -35,7 +35,13 @@ export function MetricsPage ({ agentId, apiUrl }: MetricsPageProps) {
   const { loggedIn, isLoading } = useAuthentication();
   const router = useRouter();
   const [open, setOpen] = useState(false);
-  const timeRef = useRef<HTMLInputElement>(null);
+  const [updateTime, setUpdateTime] = useState<number>();
+  const [initialUpdateTime, setInitialUpdateTime] = useState<number>();
+
+  const { data } = useQuery({
+    queryFn: () => AgentAPI.getById(agentId),
+    queryKey: ['getById', agentId],
+  });
 
   useEffect(() => {
     if (!isLoading && !loggedIn) router.push('/');
@@ -43,28 +49,34 @@ export function MetricsPage ({ agentId, apiUrl }: MetricsPageProps) {
       toast.error(error.message);
       router.push('/');
     }
-  }, [error, loggedIn, isLoading]);
+
+    if (!data) return;
+
+    const time = data.update_time;
+    setUpdateTime(time);
+    setInitialUpdateTime(time);
+  }, [error, loggedIn, isLoading, data]);
+
 
   const metrics = history[history.length - 1];
   const maxMemoryMb = metrics?.memory_max;
 
   const handleOpenChange = useCallback(async (isOpen: boolean) => {
-    if (!metrics) return;
-
     setOpen(isOpen);
 
-    if (!isOpen && timeRef.current) {
+    if (!isOpen && metrics && updateTime && initialUpdateTime && +updateTime !== initialUpdateTime) {
       try {
         await AgentAPI.setTime({
           hostname: metrics.hostname,
-          update_time: +timeRef.current.value,
+          update_time: +updateTime,
         });
         toast.success('Час оновлення метрик успішно змінено');
+        setInitialUpdateTime(+updateTime);
       } catch (error) {
         toast.error(`Щось пішло не так: ${error}`);
       }
     }
-  }, [timeRef.current, metrics]);
+  }, [metrics, updateTime, initialUpdateTime]);
 
   return (
     <Card className="w-full md:w-4/5 lg:w-2/3 mx-auto">
@@ -83,12 +95,12 @@ export function MetricsPage ({ agentId, apiUrl }: MetricsPageProps) {
                 Встановіть час оновлення метрик для агента
               </Label>
               <Input
-                id="width"
+                id="update-time"
                 type="number"
                 min={1}
-                defaultValue="5"
                 className="col-span-2 h-8"
-                ref={timeRef}
+                value={updateTime}
+                onChange={(e) => setUpdateTime(e.target.value ? +e.target.value : 5)}
               />
             </div>
           </PopoverContent>
@@ -119,8 +131,8 @@ export function MetricsPage ({ agentId, apiUrl }: MetricsPageProps) {
         </div>
         <div>
           <h3 className="text-lg font-semibold">Процеси</h3>
-            <DataTable hostname={metrics?.hostname}
-                       data={metrics?.processes?.map(({ memory_used_mb, ...data }: ProcessesList) => data) ?? []}/>
+          <DataTable hostname={metrics?.hostname}
+                     data={metrics?.processes?.map(({ memory_used_mb, ...data }: ProcessesList) => data) ?? []}/>
         </div>
       </CardContent>
     </Card>

@@ -2,6 +2,7 @@ import { client } from './instance';
 import { AgentsResponse } from '@/lib/responses/agents.response';
 import { SetTimeDto } from '@/lib/dtos/set-time.dto';
 import { ProcessSignalDto } from '@/lib/dtos/process-signal.dto';
+import { AgentResponse } from '@/lib/responses/agent.response';
 
 class AgentAPI {
   async getByUser () {
@@ -16,6 +17,11 @@ class AgentAPI {
 
   async sendSignal (body: ProcessSignalDto) {
     const { data } = await client.post<void>('/agents/sendSignal', body);
+    return data;
+  }
+
+  async getById (id: string) {
+    const { data } = await client.get<AgentResponse>(`/agents/${id}`);
     return data;
   }
 }
