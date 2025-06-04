@@ -117,7 +117,6 @@ export function MetricsPage ({ agentId, apiUrl }: MetricsPageProps) {
             ]}
           />
         </div>
-
         <div>
           <h3 className="text-lg font-semibold mb-4">Процеси</h3>
           <Table className="border">
@@ -141,7 +140,9 @@ export function MetricsPage ({ agentId, apiUrl }: MetricsPageProps) {
                         <TableCell className="w-[25%]">{name}</TableCell>
                         <TableCell className="w-[25%]">{round(memory_used_percent, 3)}</TableCell>
                         <TableCell className="w-[25%]">
-                          <TerminateDialog pid={pid} hostname={metrics?.hostname}/>
+                          <TerminateDialog pid={pid} hostname={metrics?.hostname}>
+                            <Button>Зупинити</Button>
+                          </TerminateDialog>
                         </TableCell>
                       </TableRow>
                     ),
