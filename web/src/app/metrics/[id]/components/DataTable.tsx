@@ -109,7 +109,7 @@ export default function DataTableDemo ({ data, hostname }: Props) {
       enableHiding: false,
       cell: ({ row }) => {
         return (
-          <TerminateDialog pid={row.getValue('pid')} hostname={hostname}>
+          <TerminateDialog pid={row.getValue('pid')} name={row.getValue('name')} hostname={hostname}>
             <Button>Зупинити процес</Button>
           </TerminateDialog>
         );

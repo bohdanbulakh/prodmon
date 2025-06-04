@@ -22,10 +22,11 @@ import { ProcessSignalType } from '@/lib/dtos/process-signal.dto';
 
 type Props = {
   pid: number;
+  name: string;
   hostname?: string;
 } & PropsWithChildren;
 
-export default function TerminateDialog ({ pid, hostname, children }: Props) {
+export default function TerminateDialog ({ pid, name, hostname, children }: Props) {
   const selectedMethod = useRef<ProcessSignalType>('TERM');
 
   const handleTerminate = useCallback(async () => {
@@ -48,7 +49,7 @@ export default function TerminateDialog ({ pid, hostname, children }: Props) {
         <AlertDialogTrigger asChild>{children}</AlertDialogTrigger>
         <AlertDialogContent className="">
           <AlertDialogHeader>
-            <AlertDialogTitle>Зупинити процес</AlertDialogTitle>
+            <AlertDialogTitle>Зупинити процес {name}?</AlertDialogTitle>
             <AlertDialogDescription>
               Виберіть метод зупинки процесу
             </AlertDialogDescription>
