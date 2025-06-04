@@ -3,6 +3,7 @@ import { AgentsResponse } from '@/lib/responses/agents.response';
 import { SetTimeDto } from '@/lib/dtos/set-time.dto';
 import { ProcessSignalDto } from '@/lib/dtos/process-signal.dto';
 import { AgentResponse } from '@/lib/responses/agent.response';
+import { RemoveAgent } from '@/lib/responses/remove-agent';
 
 class AgentAPI {
   async getByUser () {
@@ -20,8 +21,13 @@ class AgentAPI {
     return data;
   }
 
-  async getById (id: string) {
+  async getById (id: number) {
     const { data } = await client.get<AgentResponse>(`/agents/${id}`);
+    return data;
+  }
+
+  async removeByHostname (body: RemoveAgent) {
+    const { data } = await client.post<void>('/agents/remove', body);
     return data;
   }
 }
