@@ -7,7 +7,7 @@ RUN go mod download
 
 COPY . .
 
-RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -o agent main.go metrics.go websocket_client.go
+RUN CGO_ENABLED=0 GOOS=linux go build -o agent main.go metrics.go websocket_client.go
 
 FROM scratch
 
